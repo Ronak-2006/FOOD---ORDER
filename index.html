@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body class="login">
+    <div class="container">
+        <h2 style="color:#2575fc; margin-bottom: 10px;">Welcome!</h2>
+        <h1 class="title">Login</h1>
+
+        <!-- Login Form -->
+        <form onsubmit="handleLogin(event)">
+            <label class="label" for="email">Email Address</label>
+            <input class="input" id="email" name="email" type="email" placeholder="Enter your email" required>
+
+            <label class="label" for="password">Password</label>
+            <input class="input" id="password" name="password" type="password" placeholder="Enter your password" required>
+
+            <button class="button" type="submit">Login</button>
+        </form>
+
+        <!-- First-time visitor helper -->
+        <div class="helper">
+            Visiting for the first time? 
+            <a class="link" href="create account.html">Create account</a>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (email && password) {
+                try {
+                    const result = await AuthAPI.login({ email, password });
+                    
+                    if (result.message) {
+                        AuthAPI.saveUserToLocalStorage(result.user);
+                        alert("Login successful!");
+                        window.location.href = 'menu.html';
+                    } else {
+                        alert(result.error || "Login failed. Please try again.");
+                    }
+                } catch (error) {
+                    alert("Login failed. Please check your credentials and try again.");
+                }
+            } else {
+                alert('Please fill in all fields correctly.');
+            }
+        }
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = AuthAPI.getCurrentUser();
+            if (currentUser) {
+                window.location.href = 'menu.html';
+            }
+        });
+    </script>
+</body>
+</html>
